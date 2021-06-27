@@ -3,8 +3,8 @@ const https = require("https");
 const path = require("path");
 const fs = require("fs");
 const cors = require("cors");
-const bodyParser = require("body-parser");
-
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 3333;
 
@@ -16,18 +16,31 @@ const corsOption = {
 
 app.use(cors(corsOption));
 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res, next) => {
   res.json({ message: "Hello!!! SSL Server" });
 });
 
-const sslServer = https.createServer(
-  {
-    key: fs.readFileSync(path.join(__dirname, "cert", "key.pem"), "utf-8"),
-    cert: fs.readFileSync(path.join(__dirname, "cert", "cert.pem"), "utf-8"),
-  },
-  app
+app.use((err, req, res, next) => {
+  console.log(`ERROR:${err}`);
+});
+
+const privateKey = fs.readFileSync(
+  path.join(__dirname, "cert", "key.pem"),
+  "utf-8"
 );
 
-sslServer.listen(port, () => console.log(`Secure server port ${port}`));
+const certificate = fs.readFileSync(
+  path.join(__dirname, "cert", "cert.pem"),
+  "utf-8"
+);
+
+const credentials = { key: privateKey, cert: certificate };
+
+const gServer = https.createServer(credentials, app);
+
+gServer.listen(port, () => console.log(`Secure server port ${port}`));
+
+module.exports = gServer;
