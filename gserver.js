@@ -1,12 +1,14 @@
+require("dotenv").config();
 const express = require("express");
 const https = require("https");
 const path = require("path");
 const fs = require("fs");
 const cors = require("cors");
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 3333;
+const cookieParser = require("cookie-parser");
+
+const userRouter = require("./Routes/user");
 
 const corsOption = {
   origin: true,
@@ -15,9 +17,11 @@ const corsOption = {
 };
 
 app.use(cors(corsOption));
-
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use("/user", userRouter);
 
 app.get("/", (req, res, next) => {
   res.json({ message: "Hello!!! SSL Server" });
