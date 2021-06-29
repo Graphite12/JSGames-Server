@@ -1,50 +1,41 @@
-require("dotenv").config();
 const express = require("express");
-const https = require("https");
+const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
-const cors = require("cors");
-const app = express();
-const port = process.env.PORT || 3333;
-const cookieParser = require("cookie-parser");
+const passport = require("passport");
+const https = require("https");
 
-const userRouter = require("./Routes/user");
+const app = express();
+
+const passportConfig = require("./config/passport");
+const auth = require("./Routes/auth");
 
 const corsOption = {
   origin: true,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTION"],
 };
+require("dotenv").config();
 
-app.use(cors(corsOption));
-app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/user", userRouter);
+app.use(cors(corsOption));
+app.use(passport.initialize());
+passportConfig();
 
-app.get("/", (req, res, next) => {
-  res.json({ message: "Hello!!! SSL Server" });
-});
+app.use("/auth", auth);
+app.use("/", (req, res) => res.send("Hello"));
 
-app.use((err, req, res, next) => {
-  console.log(`ERROR:${err}`);
-});
+const privateKey = fs.readFileSync(path.join(__dirname, "cert", "key.pem"));
+const certificate = fs.readFileSync(path.join(__dirname, "cert", "cert.pem"));
 
-const privateKey = fs.readFileSync(
-  path.join(__dirname, "cert", "key.pem"),
-  "utf-8"
-);
-
-const certificate = fs.readFileSync(
-  path.join(__dirname, "cert", "cert.pem"),
-  "utf-8"
-);
-
-const credentials = { key: privateKey, cert: certificate };
+const credentials = {
+  key: privateKey,
+  cert: certificate,
+};
 
 const gServer = https.createServer(credentials, app);
+const port = process.env.PORT || 3333;
 
 gServer.listen(port, () => console.log(`Secure server port ${port}`));
-
-module.exports = gServer;
