@@ -1,41 +1,50 @@
 const express = require("express");
-const cors = require("cors");
-const path = require("path");
-const fs = require("fs");
+const passportConfig = require("./passport/index");
 const passport = require("passport");
 const https = require("https");
+const jwt = require("jsonwebtoken");
+const path = require("path");
+const fs = require("fs");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
 
+// const privateKey = fs.readFileSync(path.join(__dirname, "cert", "key.pem"));
+// const certificate = fs.readFileSync(path.join(__dirname, "cert", "cert.pem"));
+
+require("dotenv").config();
+const user = require("./routes/users");
+const port = process.env.PORT || 8000;
 const app = express();
 
-const passportConfig = require("./config/passport");
-const auth = require("./Routes/auth");
+const cookieOption = {
+  httpOnly: true,
+  secure: true,
+  sameSite: true,
+};
 
 const corsOption = {
   origin: true,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTION"],
 };
-require("dotenv").config();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const sslCert = {
+  cert: fs.readFileSync(path.join(__dirname, "cert", "cert.pem")),
+  key: fs.readFileSync(path.join(__dirname, "cert", "key.pem")),
+};
 
+app.use(logger("dev"));
+app.use(cookieParser(cookieOption));
 app.use(cors(corsOption));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());
 passportConfig();
 
-app.use("/auth", auth);
-app.use("/", (req, res) => res.send("Hello"));
+app.use("/auth", user);
+const gServer = https.createServer(sslCert, app);
 
-const privateKey = fs.readFileSync(path.join(__dirname, "cert", "key.pem"));
-const certificate = fs.readFileSync(path.join(__dirname, "cert", "cert.pem"));
-
-const credentials = {
-  key: privateKey,
-  cert: certificate,
-};
-
-const gServer = https.createServer(credentials, app);
-const port = process.env.PORT || 3333;
-
-gServer.listen(port, () => console.log(`Secure server port ${port}`));
+gServer.listen(port, () => {
+  console.log(`localhost:${port}`);
+});
