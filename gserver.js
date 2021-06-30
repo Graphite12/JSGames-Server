@@ -1,8 +1,8 @@
 const express = require("express");
-const passportConfig = require("./passport/index");
-const passport = require("passport");
+// const passportConfig = require("./passport/index");
+// const passport = require("passport");
 const https = require("https");
-const jwt = require("jsonwebtoken");
+
 const path = require("path");
 const fs = require("fs");
 const cors = require("cors");
@@ -13,7 +13,8 @@ const logger = require("morgan");
 // const certificate = fs.readFileSync(path.join(__dirname, "cert", "cert.pem"));
 
 require("dotenv").config();
-const user = require("./routes/users");
+const authRoute = require("./routes/users");
+
 const port = process.env.PORT || 8000;
 const app = express();
 
@@ -39,10 +40,10 @@ app.use(cookieParser(cookieOption));
 app.use(cors(corsOption));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(passport.initialize());
-passportConfig();
+// app.use(passport.initialize());
+// passportConfig();
 
-app.use("/auth", user);
+app.use("/auth", authRoute);
 const gServer = https.createServer(sslCert, app);
 
 gServer.listen(port, () => {
