@@ -9,9 +9,6 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
-// const privateKey = fs.readFileSync(path.join(__dirname, "cert", "key.pem"));
-// const certificate = fs.readFileSync(path.join(__dirname, "cert", "cert.pem"));
-
 require("dotenv").config();
 const authRoute = require("./routes/users");
 
@@ -38,8 +35,9 @@ const sslCert = {
 app.use(logger("dev"));
 app.use(cookieParser(cookieOption));
 app.use(cors(corsOption));
-app.use(express.json());
+
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 // app.use(passport.initialize());
 // passportConfig();
 
