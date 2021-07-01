@@ -11,6 +11,7 @@ require("dotenv").config();
 exports.register = async (req, res) => {
   console.log(req.body);
   //   console.log(res);
+
   const { errors, isValid } = registerValidator(req.body);
 
   let { email, username, password } = req.body;
@@ -19,7 +20,7 @@ exports.register = async (req, res) => {
     return res.status(400).json(errors);
   }
 
-  const emailExists = await User.findAll({ Where: { email: email } });
+  const emailExists = await User.findOne({ Where: { email: email } });
   //   console.log(emailExists);
   if (emailExists) {
     return res.status(400).json({ message: "이미 사용중인 이메일입니다." });
