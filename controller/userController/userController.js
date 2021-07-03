@@ -9,7 +9,6 @@ const {
 require("dotenv").config();
 
 exports.register = async (req, res) => {
-  console.log(req.body);
   //   console.log(res);
 
   const { errors, isValid } = registerValidator(req.body);
@@ -20,11 +19,11 @@ exports.register = async (req, res) => {
     return res.status(400).json(errors);
   }
 
-  const emailExists = await User.findOne({ Where: { email: email } });
-  //   console.log(emailExists);
-  if (emailExists) {
-    return res.status(400).json({ message: "이미 사용중인 이메일입니다." });
-  }
+  // const emailExists = await User.findOne({ Where: { email: email } });
+  // console.log(emailExists);
+  // if (emailExists) {
+  //   return res.status(400).json({ message: "이미 사용중인 이메일입니다." });
+  // }
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -34,9 +33,17 @@ exports.register = async (req, res) => {
     password: hashedPassword,
   };
 
-  User.create(newUser)
-    .then((save) => {
-      res.status(200).json({ status: "Success", new_user_id: save.id });
+  await User.findOrCreate({
+    where: { username: username, email: email },
+    defaults: newUser,
+  })
+    .then(([save, created]) => {
+      if (!created) {
+        return res.status(400).json({ message: "이미 사용중인 이메일입니다." });
+      } else {
+        console.log([save, created]);
+        res.status(200).json({ status: "Success", new_user_id: save.id });
+      }
     })
     .catch((err) => res.status(500).json({ message: err + "잘안됩니다." }));
 
@@ -84,7 +91,7 @@ exports.login = async (req, res) => {
     return res.status(400).send("패스워드를 제대로 입력하세요");
   }
 
-  const token = jwt.sign(
+  const token = await jwt.sign(
     {
       id: user.id,
       exp: Math.floor(Date.now() / 1000) + 60 * 10,
@@ -155,3 +162,15 @@ exports.login = async (req, res) => {
 };
 
 exports.profile = async (req, res) => {};
+
+exports.logout = async (req, res) => {
+  const userid = req.body.id;
+
+  const user = await User.findOne({ id: userid });
+
+  if (!user) {
+    res.status(401).json({ message: "존재하지 않는 유저입니다." });
+  } else {
+    res.cookie("auth_token", "").json({ message: "로그아웃 완료!" });
+  }
+};

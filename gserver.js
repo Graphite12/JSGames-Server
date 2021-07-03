@@ -1,6 +1,6 @@
 const express = require("express");
 // const passportConfig = require("./passport/index");
-// const passport = require("passport");
+const passport = require("passport");
 const https = require("https");
 
 const path = require("path");
@@ -11,8 +11,8 @@ const logger = require("morgan");
 
 require("dotenv").config();
 const authRoute = require("./routes/users");
-
-const port = process.env.PORT || 8000;
+const mainRoute = require("./routes/index");
+const port = process.env.PORT || 3000;
 const app = express();
 
 const cookieOption = {
@@ -22,7 +22,7 @@ const cookieOption = {
 };
 
 const corsOption = {
-  origin: true,
+  origin: ["https://localhost:3000"],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTION"],
 };
@@ -42,6 +42,8 @@ app.use(express.json());
 // passportConfig();
 
 app.use("/auth", authRoute);
+app.use(mainRoute);
+
 const gServer = https.createServer(sslCert, app);
 
 gServer.listen(port, () => {
