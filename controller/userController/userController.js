@@ -99,7 +99,10 @@ exports.login = async (req, res) => {
     process.env.JWT_SECRET
   );
 
-  res.cookie("auth_token", token).json({ tokne: token });
+  res
+    .cookie("auth_token", token, { httpOnly: true, secure: true })
+    .status(200)
+    .json({ success: true, userName: user.username, email: email });
   //   const { email, password } = req.body;
   //   let user = User.findAll({ where: { email } });
   //   if (!user) {
