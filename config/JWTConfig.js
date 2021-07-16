@@ -29,7 +29,7 @@ exports.sendRefToken = (res, restkn) => {
 // };
 
 exports.authorization = (req, res, next) => {
-  let token = req.cookies.auth_token;
+  let token = req.cookies.user_token;
   let key = process.env.JWT_SECRET;
 
   if (!token) {

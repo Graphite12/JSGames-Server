@@ -43,7 +43,7 @@ exports.register = async (req, res) => {
     User.create(newUser)
       .then((data) => {
         res.status(200).json({
-          user: data,
+          userData: data,
         });
       })
       .catch((err) => {
@@ -93,16 +93,16 @@ exports.login = async (req, res) => {
           });
         }
 
-        const token = generateToken({ id: user._id });
+        const token = generateToken({ id: user.id });
 
         res
-          .cookie("auth_token", token, {
+          .cookie("user_token", token, {
             httpOnly: true,
             secure: true,
             sameSite: true,
           })
           .status(200)
-          .json({ auth: true, accessToken: token });
+          .json({ isLogin: true, userData: user, accessToken: token });
       })
       .catch((err) => {
         res.status(500).json({ err });
@@ -140,15 +140,31 @@ exports.login = async (req, res) => {
   // });
 };
 exports.profile = async (req, res) => {
-  const user = await User.findByPk(req.params.id);
-
-  if (user) {
-  }
+  console.log(res.locals);
+  await User.findOne({
+    where: { id: req.params },
+  })
+    .then((result) => {
+      console.log(result);
+      if (!result) {
+        return res
+          .status(401)
+          .json({ data: null, message: "존재하지 않는 유저입니다." });
+      }
+      res.status(200).json({
+        data: result.dataValues,
+        message: "ok",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(404).json({ message: "not found" });
+    });
 };
 
-exports.logout = async (req, res) => {
+exports.logout = (req, res) => {
   return res
-    .clearCookie("auth_token")
+    .clearCookie("user_token")
     .status(200)
     .json({ message: "로그아웃 성공" });
 };

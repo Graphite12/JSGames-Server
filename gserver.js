@@ -41,7 +41,7 @@ app.use(express.json());
 // app.use(passport.initialize());
 // passportConfig();
 
-app.use("/auth", authRoute);
+app.use(authRoute);
 app.use(mainRoute);
 
 const gServer = https.createServer(sslCert, app);
