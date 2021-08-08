@@ -24,9 +24,6 @@ exports.register = async (req, res) => {
   }
 
   try {
-    // const user = User.findOne({ where: { email: email, username: username } });
-    // if (user) throw Error("User does not exist");
-
     const salt = await bcrypt.genSalt(10);
     if (!salt) throw Error("Something went wrong with bcrypt");
 
@@ -46,8 +43,8 @@ exports.register = async (req, res) => {
           userData: data,
         });
       })
-      .catch((err) => {
-        res.status(401).json({ Message: err.message });
+      .catch((e) => {
+        res.status(401).json({ Message: e.message });
       });
   } catch (e) {
     res.status(400).json({ error: e.message });
@@ -77,7 +74,7 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    User.findOne({ where: { email: email } })
+    await User.findOne({ where: { email: email } })
       .then((user) => {
         if (!user) {
           return res.status(404).json({ message: "User Not Found" });
@@ -94,6 +91,8 @@ exports.login = async (req, res) => {
         }
 
         const token = generateToken({ id: user.id });
+
+        delete user.dataValues.password;
 
         res
           .cookie("user_token", token, {
@@ -140,12 +139,10 @@ exports.login = async (req, res) => {
   // });
 };
 exports.profile = async (req, res) => {
-  console.log(res.locals);
   await User.findOne({
-    where: { id: req.params },
+    where: { id: req.body.id },
   })
     .then((result) => {
-      console.log(result);
       if (!result) {
         return res
           .status(401)

@@ -32,18 +32,11 @@ exports.authorization = (req, res, next) => {
   let token = req.cookies.user_token;
   let key = process.env.JWT_SECRET;
 
-  if (!token) {
-    return res.status(403).json({
-      auth: false,
-      message: "인증이 만료됨",
-    });
-  }
-
   try {
     jwt.verify(token, key);
     return next();
-  } catch (err) {
-    if (err.name === "TokenExpiredError") {
+  } catch (e) {
+    if (e.name === "TokenExpiredError") {
       return res.status(403).json({
         status: 403,
         message: "토큰이 만료되었습니다.",

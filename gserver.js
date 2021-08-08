@@ -38,8 +38,6 @@ app.use(cors(corsOption));
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-// app.use(passport.initialize());
-// passportConfig();
 
 app.use(authRoute);
 app.use(mainRoute);
