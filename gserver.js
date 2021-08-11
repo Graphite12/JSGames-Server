@@ -1,8 +1,7 @@
 const express = require("express");
 // const passportConfig = require("./passport/index");
 const passport = require("passport");
-const https = require("https");
-
+const http = require("http");
 const path = require("path");
 const fs = require("fs");
 const cors = require("cors");
@@ -34,11 +33,6 @@ const corsOption = {
   methods: "GET,POST,PUT,DELETE,OPTION",
 };
 
-const sslCert = {
-  cert: fs.readFileSync(path.join(__dirname, "cert", "cert.pem")),
-  key: fs.readFileSync(path.join(__dirname, "cert", "key.pem")),
-};
-
 app.use(logger("dev"));
 app.use(cookieParser(cookieOption));
 app.use(cors(corsOption));
@@ -48,7 +42,7 @@ app.use(express.json());
 
 app.use(authRoute);
 app.use(mainRoute);
-const gServer = https.createServer(sslCert, app);
+const gServer = http.createServer(sslCert, app);
 
 gServer.listen(port, () => {
   console.log(`localhost:${port}`);
