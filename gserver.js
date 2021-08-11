@@ -21,10 +21,17 @@ const cookieOption = {
   sameSite: true,
 };
 
+const whitelist = ["https://localhost:3000", "https://jsgames.link"];
 const corsOption = {
-  origin: ["https://localhost:3000"],
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTION"],
+  methods: "GET,POST,PUT,DELETE,OPTION",
 };
 
 const sslCert = {
@@ -41,7 +48,6 @@ app.use(express.json());
 
 app.use(authRoute);
 app.use(mainRoute);
-
 const gServer = https.createServer(sslCert, app);
 
 gServer.listen(port, () => {

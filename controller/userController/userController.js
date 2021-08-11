@@ -6,11 +6,7 @@ const {
   loginValidator,
 } = require("../../validation/authValidation");
 const { generateToken } = require("../../config/JWTConfig");
-const { token } = require("morgan");
 require("dotenv").config();
-
-//token save
-const tokenUsers = {};
 
 exports.register = async (req, res) => {
   //   console.log(res);
