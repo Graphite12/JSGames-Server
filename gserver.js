@@ -11,13 +11,13 @@ const logger = require("morgan");
 
 require("dotenv").config();
 const authRoute = require("./routes/users");
-const mainRoute = require("./routes/index");
+const mainRoute = require("./routes/main");
 const port = process.env.PORT || 3000;
 const app = express();
 
 const whitelist = [
   "https://localhost:3000",
-  "https://www.jsgames.link/*",
+  "https://*.jsgames.link",
   "https://jsgames.link",
 ];
 const corsOption = {
@@ -41,7 +41,8 @@ app.use(cors(corsOption));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.use(authRoute);
+app.use("/auth", authRoute);
+app.use(mainRoute);
 
 app.listen(port, () => {
   console.log(`this is ${port}`);

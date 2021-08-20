@@ -5,7 +5,10 @@ const {
   registerValidator,
   loginValidator,
 } = require("../../validation/authValidation");
-const { generateToken, refreshToken } = require("../../config/JWTConfig");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../../config/JWTConfig");
 require("dotenv").config();
 
 exports.register = async (req, res, next) => {
@@ -34,8 +37,8 @@ exports.login = async (req, res) => {
     }
     console.log(originUser);
 
-    const accToken = generateToken({ id: originUser._id });
-    const refToken = refreshToken({ id: originUser._id });
+    const accToken = generateAccessToken({ id: originUser._id });
+    const refToken = generateRefreshToken({ id: originUser._id });
 
     res.cookie("auth_token", accToken).status(200).json({
       message: "로그인 성공!",
