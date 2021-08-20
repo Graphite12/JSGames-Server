@@ -1,8 +1,7 @@
 const router = require("express").Router();
-const { authorization } = require("../config/JWTConfig");
 
-router.get("/", function (res, req) {
-  console.log("Hello world");
+router.get("/", function (req, res) {
+  res.send("JSGaems에 오신것을 환영합니다.");
 });
 
 module.exports = router;

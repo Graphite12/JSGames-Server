@@ -18,7 +18,7 @@ module.exports = {
     let key = process.env.JWT_SECRET;
 
     try {
-      jwt.verify(token, key);
+      verify(token, key);
       return next();
     } catch (e) {
       if (e.name === "TokenExpiredError") {

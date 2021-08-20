@@ -30,7 +30,6 @@ const corsOption = {
   },
   credentials: true,
   methods: "GET,POST,PUT,DELETE,OPTION",
-  optionsSuccessStatus: 200,
 };
 
 app.use(cookieParser());
@@ -42,7 +41,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.use("/auth", authRoute);
-app.use(mainRoute);
+app.use("/", mainRoute);
 
 app.listen(port, () => {
   console.log(`this is ${port}`);
