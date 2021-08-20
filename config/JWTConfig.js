@@ -1,35 +1,21 @@
-const jwt = require("jsonwebtoken");
+const { sign, verify } = require("jsonwebtoken");
 const {
   refreshAccessToken,
 } = require("../controller/userController/userController");
 require("dotenv").config();
 
-exports.generateToken = (target) => {
-  return jwt.sign(target, process.env.JWT_SECRET, { expiresIn: 3600 });
-};
 
-// exports.refreshToken = (target) => {
-//   return jwt.sign(target, process.env.REF_JWT_SECRET, { expiresIn: "15h" });
-// };
+module.exports= {
+generateAccessToken: (data) => {
+  return sign(data, process.env.JWT_SECRET. { expiresIn: "15s"});
+},
 
-exports.sendRefToken = (res, restkn) => {
-  res.cookie("auth_token", restkn, {
-    httpOnly: true,
-    secure: true,
-    sameSite: true,
-  });
-};
-
-// exports.sendAccessToken = (res, accessToken) => {
-//   res.json({ data: { accessToken }, message: "ok" });
-// };
-
-// exports.resendAccessToken = (res, accessToken, target) => {
-//   res.json({ data: { accessToken, userInfo: target }, message: "ok" });
-// };
-
-exports.authorization = (req, res, next) => {
-  let token = req.cookies.user_token;
+generateRefreshToken: (data) => {
+  return sign(data, process.env.REF_JWT_SECRET, { expiresIn: "30d"})
+}
+,
+authorization = (req, res, next) => {
+  let token = req.cookies.auth_token;
   let key = process.env.JWT_SECRET;
 
   try {
@@ -49,4 +35,5 @@ exports.authorization = (req, res, next) => {
   }
 
   // res.json({ message: decoded });
-};
+}
+}

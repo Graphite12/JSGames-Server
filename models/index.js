@@ -43,4 +43,13 @@ Object.keys(db).forEach((modelName) => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+db.refreshToken.belongsTo(db.user, {
+  foreignKey: "userId",
+  targetKey: "id",
+});
+db.user.hasOne(db.refreshToken, {
+  foreignKey: "userId",
+  targetKey: "id",
+});
+
 module.exports = db;

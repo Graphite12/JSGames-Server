@@ -2,6 +2,7 @@ const express = require("express");
 // const passportConfig = require("./passport/index");
 const passport = require("passport");
 const http = require("http");
+const https = require("https");
 const path = require("path");
 const fs = require("fs");
 const cors = require("cors");
@@ -14,12 +15,6 @@ const mainRoute = require("./routes/index");
 const port = process.env.PORT || 3000;
 const app = express();
 
-const cookieOption = {
-  httpOnly: true,
-  secure: true,
-  sameSite: true,
-};
-
 const whitelist = ["https://localhost:3000", "https://jsgames.link"];
 const corsOption = {
   origin: function (origin, callback) {
@@ -31,19 +26,19 @@ const corsOption = {
   },
   credentials: true,
   methods: "GET,POST,PUT,DELETE,OPTION",
+  optionsSuccessStatus: 200,
 };
 
-app.use(logger("dev"));
-app.use(cookieParser(cookieOption));
-app.use(cors(corsOption));
+app.use(cookieParser());
 
+app.use(logger("dev"));
+
+app.use(cors(corsOption));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.use(authRoute);
-app.use(mainRoute);
-const gServer = http.createServer(sslCert, app);
 
-gServer.listen(port, () => {
-  console.log(`localhost:${port}`);
+app.listen(port, () => {
+  console.log(`this is ${port}`);
 });
