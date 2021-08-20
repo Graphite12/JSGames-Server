@@ -15,7 +15,11 @@ const mainRoute = require("./routes/index");
 const port = process.env.PORT || 3000;
 const app = express();
 
-const whitelist = ["https://localhost:3000", "https://jsgames.link"];
+const whitelist = [
+  "https://localhost:3000",
+  "https://www.jsgames.link/*",
+  "https://jsgames.link",
+];
 const corsOption = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1 || !origin) {
