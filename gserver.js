@@ -41,7 +41,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.use(mainRoute);
-app.use("/auth", authRoute);
+app.use(authRoute);
 
 let server;
 

@@ -8,9 +8,9 @@ const {
 } = require("../controller/userController/userController");
 const { authorization } = require("../config/JWTConfig");
 
-router.post("/login", login);
-router.post("/register", register);
-router.get("/logout", authorization, logout);
-router.get("/profile", authorization, profile);
+router.post("/auth/login", login);
+router.post("/auth/register", register);
+router.get("/auth/logout", authorization, logout);
+router.get("/auth/profile", authorization, profile);
 
 module.exports = router;
