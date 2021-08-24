@@ -16,9 +16,9 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 const whitelist = [
-  "https://localhost:3000",
-  "https://*.jsgames.link",
-  "https://jsgames.link",
+  "http://localhost:3000",
+  "http://*.jsgames.link",
+  "http://jsgames.link",
 ];
 const corsOption = {
   origin: function (origin, callback) {
@@ -29,7 +29,7 @@ const corsOption = {
     }
   },
   credentials: true,
-  methods: "GET,POST,PUT,DELETE,OPTION",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTION"],
 };
 
 app.use(cookieParser());
@@ -40,9 +40,20 @@ app.use(cors(corsOption));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+app.use(mainRoute);
 app.use("/auth", authRoute);
-app.use("/", mainRoute);
 
-app.listen(port, () => {
-  console.log(`this is ${port}`);
-});
+let server;
+
+if (fs.existsSync("./cert/key.pem") && fs.existsSync("./cert/cert.pem")) {
+  const privateKey = fs.readFileSync(__dirname + "/cert/key.pem", "utf8");
+  const certificate = fs.readFileSync(__dirname + "/cert/cert.pem", "utf8");
+  const credentials = { key: privateKey, cert: certificate };
+
+  server = https.createServer(credentials, app);
+  server.listen(port, () => console.log("https server Running"));
+} else {
+  server = app.listen(port, () => {
+    console.log(`http server Running`);
+  });
+}
