@@ -57,3 +57,5 @@ if (fs.existsSync("./cert/key.pem") && fs.existsSync("./cert/cert.pem")) {
     console.log(`http server Running`);
   });
 }
+
+module.exports = server;

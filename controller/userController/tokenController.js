@@ -54,21 +54,9 @@ module.exports = {
       });
     }
 
-    User.findOne({ where: { id: refreshTokenData._id } })
-      .then((data) => {
-        if (!data) {
-          return res.json({
-            data: null,
-            message: `reftoken has been tempered`,
-          });
-        }
+    const reftoken = User.findOne({ where: { id: refreshTokenData._id } });
 
-        delete data.dataValues.password;
-        const newAccessToken = generateAccessToken(data.dataValues);
-        resendAccessToken(res, newAccessToken, data.dataValues);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    const newAccessToken = generateAccessToken({ id: reftoken._id });
+    resendAccessToken(res, newAccessToken, { info: reftoken });
   },
 };

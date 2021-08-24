@@ -50,6 +50,7 @@ module.exports = {
 
     try {
       verify(token, key);
+
       return next();
     } catch (e) {
       if (e.name === "TokenExpiredError") {
@@ -58,12 +59,11 @@ module.exports = {
           message: "토큰이 만료되었습니다.",
         });
       }
-      return res.status(401).json({
-        status: 401,
-        message: "유효하지 않은 토큰입니다.",
-      });
     }
-
+    res.status(401).json({
+      status: 401,
+      message: "유효하지 않은 토큰입니다.",
+    });
     // res.json({ message: decoded });
   },
 
