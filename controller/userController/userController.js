@@ -78,8 +78,11 @@ module.exports = {
     const users = await User.findOne({ where: { id: verifys._id } });
 
     res.json({
-      userName: users.username,
-      email: users.email,
+      user: {
+        userName: users.username,
+        email: users.email,
+        addAccount: users.createdAt,
+      },
     });
   },
 };

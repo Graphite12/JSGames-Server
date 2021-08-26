@@ -12,6 +12,7 @@ const logger = require("morgan");
 require("dotenv").config();
 const authRoute = require("./routes/users");
 const mainRoute = require("./routes/main");
+const mailerRoute = require("./routes/mailer");
 const port = process.env.PORT || 3000;
 const app = express();
 
@@ -42,6 +43,7 @@ app.use(express.json());
 
 app.use(mainRoute);
 app.use(authRoute);
+app.use(mailerRoute);
 
 let server;
 
