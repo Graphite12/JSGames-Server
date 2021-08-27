@@ -1,6 +1,6 @@
 const router = require("express").Router();
-const { sendMail } = require("../controller/userController/mailController");
+const { mailerModule } = require("../controller/userController/mailController");
 
-router.post("/contact", sendMail);
+router.post("/contact", mailerModule);
 
 module.exports = router;
