@@ -76,6 +76,8 @@ module.exports = {
          <li>Name: ${name}</li>
          <li>Email: ${email}</li>
          <li>Subject: ${subject}</li>
+         <br/>
+         <br/>
          <article>${message}</article>
        </ul>
       </div>`,
@@ -85,7 +87,7 @@ module.exports = {
       if (err) {
         res.json({ message: err });
       } else {
-        res.json({ message: `서버가 메세지를 보낼 수 있음.` });
+        res.json({ message: `서버가 메세지를 전송할 수 있음.` });
       }
     });
 

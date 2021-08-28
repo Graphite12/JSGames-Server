@@ -13,6 +13,7 @@ require("dotenv").config();
 const authRoute = require("./routes/users");
 const mainRoute = require("./routes/main");
 const mailerRoute = require("./routes/mailer");
+const socialRoute = require("./routes/sociallogin");
 const port = process.env.PORT || 3000;
 const app = express();
 
@@ -40,10 +41,12 @@ app.use(logger("dev"));
 app.use(cors(corsOption));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(passport.initialize());
 
 app.use(mainRoute);
 app.use(authRoute);
 app.use(mailerRoute);
+app.use(socialRoute);
 
 let server;
 

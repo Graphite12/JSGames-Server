@@ -1,4 +1,6 @@
 const bcrypt = require("bcrypt");
+const passport = require("passport");
+const LocalStragegy = require("passport-local").Strategy;
 const { User } = require("../../models");
 const { sign, verify } = require("jsonwebtoken");
 const {
@@ -33,29 +35,29 @@ module.exports = {
     }
   },
 
-  login: async (req, res) => {
-    const { password, email } = req.body;
+  // login: async (req, res) => {
+  //   const { password, email } = req.body;
 
-    const origin = await User.findOne({ where: { email } });
+  //   const origin = await User.findOne({ where: { email } });
 
-    if (!origin) {
-      return res.status(404).json({
-        message: "유저를 찾을 수 없습니다.",
-      });
-    }
+  //   if (!origin) {
+  //     return res.status(404).json({
+  //       message: "유저를 찾을 수 없습니다.",
+  //     });
+  //   }
 
-    if (!(await bcrypt.compareSync(password, origin.password))) {
-      return res.status(400).json({
-        message: "비밀번호가 일치하지 않습니다.",
-      });
-    }
+  //   if (!(await bcrypt.compareSync(password, origin.password))) {
+  //     return res.status(400).json({
+  //       message: "비밀번호가 일치하지 않습니다.",
+  //     });
+  //   }
 
-    // delete data.dataValues.password;
-    const accTokens = generateAccessToken({ _id: origin.id });
-    const refTokens = generateRefreshToken({ _id: origin.id });
-    sendAccessToken(res, accTokens);
-    sendRefreshToken(res, refTokens);
-  },
+  //   // delete data.dataValues.password;
+  //   const accTokens = generateAccessToken({ _id: origin.id });
+  //   const refTokens = generateRefreshToken({ _id: origin.id });
+  //   sendAccessToken(res, accTokens);
+  //   sendRefreshToken(res, refTokens);
+  // },
 
   logout: async (req, res) => {
     res
