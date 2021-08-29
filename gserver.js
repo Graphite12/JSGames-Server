@@ -1,6 +1,7 @@
 const express = require("express");
-// const passportConfig = require("./passport/index");
+
 const passport = require("passport");
+const passports = require("./config/passportConfig");
 const http = require("http");
 const https = require("https");
 const path = require("path");
@@ -14,6 +15,8 @@ const authRoute = require("./routes/users");
 const mainRoute = require("./routes/main");
 const mailerRoute = require("./routes/mailer");
 const socialRoute = require("./routes/sociallogin");
+//passport
+
 const port = process.env.PORT || 3000;
 const app = express();
 
@@ -42,7 +45,7 @@ app.use(cors(corsOption));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(passport.initialize());
-
+passports(passport);
 app.use(mainRoute);
 app.use(authRoute);
 app.use(mailerRoute);

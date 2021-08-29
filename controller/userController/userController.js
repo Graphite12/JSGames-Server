@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-const LocalStragegy = require("passport-local").Strategy;
+
 const { User } = require("../../models");
 const { sign, verify } = require("jsonwebtoken");
 const {
@@ -17,23 +17,79 @@ const {
 require("dotenv").config();
 
 module.exports = {
-  register: async (req, res) => {
-    const { password, email, username } = req.body;
-
-    const hash = await bcrypt.hashSync(password, 10);
-    const newUser = {
-      username: username,
-      email: email,
-      password: hash,
-    };
+  signup: async (req, res, next) => {
+    // const { email, username } = req.body;
     try {
-      await User.create(newUser).then((data) => {
-        res.json({ data: data });
-      });
+      passport.authenticate("register", (error, user, info) => {
+        console.log(user);
+        res.json({
+          user,
+          info,
+        });
+        // if (err) {
+        //   console.log(err);
+        // }
+        // if (info !== undefined) {
+        //   res.json({ message: info.message });
+        // } else {
+        //   req
+        //     .login(user, (err) => {
+        //       const data = {
+        //         email: email,
+        //         username: username,
+        //       };
+        //     })
+        //     .then((user) => {
+        //       user.update({
+        //         username: data.userName,
+        //       });
+        //     });
+        // }
+      })(req, res, next);
+    } catch (e) {}
+  },
+
+  signin: async (req, res, next) => {
+    try {
+      passport.authenticate("signin", (error, user, info) => {
+        if (error || !user) {
+          res.status(400).json({ message: info.reason });
+          return;
+        }
+
+        req.login(user, { session: false }, (loginError) => {
+          if (loginError) {
+            res.send(loginError);
+            return;
+          }
+
+          const tokens = generateAccessToken({ id: user.email });
+          res.json({ tokens });
+        });
+      })(req, res, next);
     } catch (e) {
       console.log(e);
+      return next(e);
     }
   },
+
+  // register: async (req, res) => {
+  //   const { password, email, username } = req.body;
+
+  //   const hash = await bcrypt.hashSync(password, 10);
+  //   const newUser = {
+  //     username: username,
+  //     email: email,
+  //     password: hash,
+  //   };
+  //   try {
+  //     await User.create(newUser).then((data) => {
+  //       res.json({ data: data });
+  //     });
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // },
 
   // login: async (req, res) => {
   //   const { password, email } = req.body;
